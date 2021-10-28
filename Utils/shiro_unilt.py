@@ -142,7 +142,7 @@ def chooseBestNode(data):
     :return:
     """
     # 将高维数据集按列拆成长度为L的List，L是数据集的属性数 + 1（标签列）
-    # split_result_list每一个元素都是一个属性npArray，然后对这个List遍历计算每个属性的信息增益与熵
+    # split_result_list每一个元素都是一个特征的npArray，然后对这个List遍历计算每个属性的信息增益与熵
     split_result_list = np.split(data, data.shape[1], axis=1)
     element_arrays = split_result_list[:-1]
     # 其中最后一个元素是标签列
