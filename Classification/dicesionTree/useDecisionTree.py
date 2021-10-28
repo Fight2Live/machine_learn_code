@@ -1,4 +1,5 @@
 import decisionTree
+import ransomForest
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -104,6 +105,21 @@ def createPlot(tree):
     plotTree(tree, (0.5, 1.0), '')
     plt.show()
 
+def classify(test, tree):
+    """
+    递归使用决策树分类器
+    :param test:    {feature1:f1, feature2:f2, }
+    :param tree:
+    :return:
+    """
+    for leafs in tree:
+        tk = test.get(leafs)
+        next_tree = tree.get(leafs).get(tk)
+        if type(next_tree).__name__ == 'dict':
+            classify(test, next_tree)
+        else:
+            return next_tree
+
 if __name__ == '__main__':
     decisionNode = dict(boxStyle="sawtooth", fc="0.8")
     leafNode = dict(boxstyle="round4", fc="0.8")
@@ -111,7 +127,22 @@ if __name__ == '__main__':
 
     data = np.genfromtxt(r'./lenses.txt', delimiter='\t', dtype=str)
     label = ['age', 'prescript', 'astigmatic', 'tearRate']
+    test = {'age': 'young', 'prescript': 'myope', 'astigmatic': 'yes', 'tearRate': 'reduced'}
 
-    decisionTree = decisionTree.create_decision_tree(data, label)
-    print(decisionTree)
-    createPlot(decisionTree)
+    # 单科树
+    decisionTree = decisionTree.create_decision_tree(data, label[:])
+    once_c = classify(test, decisionTree)
+
+    # 随机森林
+    k = 10
+    p = 0.8
+    final_forest = ransomForest.create_random_forest(data, label, k, p)
+    c_list = []
+    for i in range(k):
+        cur_tree = final_forest[i]
+        c_list.append(classify(test, cur_tree))
+
+    print(f'----------------------------\n单次决策树分类结果：{once_c}\n随机森林分类结果：{c_list}\n----------------------------')
+
+    # 画图
+    # createPlot(decisionTree)

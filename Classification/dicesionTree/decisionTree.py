@@ -12,12 +12,17 @@ def create_decision_tree(data, feature_name_list):
 
     # 递归停止的条件
     # 1.当前数据集中所有分类相同.
-    current_class = [temp[-1] for temp in data[:, -1:]]
+    try:
+        current_class = [temp[-1] for temp in data[:, -1:]]
+        ndim = data.shape[1]
+    except:
+        current_class = [temp[-1] for temp in data]
+        ndim = 1
     if current_class.count(current_class[0]) == len(current_class):
         return current_class[0]
 
     # 2.当数据集无法再分割，即只剩下最后一列特征时
-    if data.shape[1] <= 2:
+    if ndim <= 2:
         # 由多数来表决结点。【这里就可能会出现分类错误的问题】
         max_count = 0
         max_count_class = ''
