@@ -1,6 +1,7 @@
 import decisionTree
 import random
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 def create_random_forest(data, label, k, p):
     """
