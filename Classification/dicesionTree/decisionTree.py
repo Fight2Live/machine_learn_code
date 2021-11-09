@@ -185,6 +185,4 @@ def split_data_by_unique_value(data, index, value):
 
 
 def calcutate_Gini(data):
-
-
-
+    return
