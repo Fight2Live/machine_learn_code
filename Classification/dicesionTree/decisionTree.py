@@ -184,5 +184,108 @@ def split_data_by_unique_value(data, index, value):
     return t2
 
 
-def calcutate_Gini(data):
-    return
+
+def CART_classify(data, column_name_list):
+    """
+    CART分类树，使用基尼指数
+    :param data:    nparray数据集 ，最后一列是标签列
+    :param column_name_list:  nparray列名
+    :return:
+    """
+    split_feature = ''
+    split_value = ''
+    split_column = 0
+    min_gini = 99999
+    size_c = len(column_name_list)
+    for column in range(size_c):
+        # 遍历当前数据集，对每个特征逐一遍历，找到Gini指数最小的目标特征与目标值，作为划分依据
+        cur_feature_gini, cur_feature_value = get_feature_Gini(data, column)
+        if cur_feature_gini < min_gini:
+            split_feature = cur_feature_gini
+            split_value = cur_feature_value
+            split_column = column
+
+    if split_feature != '':
+        # todo 划分数据集
+        print('划分数据集')
+
+def get_feature_Gini(data, column):
+    """
+    循环计算目标 特征列下每个值 的基尼指数
+    取最小的那个作为该特征的划分
+    :param data:    二维数组、矩阵等
+    :param column:  当前划分的 feature 的index
+    :return:
+    """
+    value_list = set(data[:,column].tolist())
+    total_count = len(value_list)   # 数据集总数
+    min_gini = 99999
+    split_value = ''
+    for cur_value in value_list:
+        # 将data划分为 =cur_value 和 !=cur_value的两个子集
+        equal_part = []     # =cur_value
+        unequal_part = []   # !=cur_value
+        for row in data:
+            if cur_value == row[column]:
+                equal_part.append(row)
+            else :
+                unequal_part.append(row)
+        # 分别计算两个子集的gini
+        equal_gini = get_value_Gini(equal_part)
+        unequal_gini = get_value_Gini(unequal_part)
+        cur_value_gini = equal_gini * len(equal_part) / total_count + unequal_gini * len(unequal_part) / total_count
+        if cur_value_gini < min_gini :
+            min_gini = cur_value_gini
+            split_value = cur_value
+    return min_gini, split_value
+
+def get_value_Gini(data):
+    """
+    计算目标 特征列下，划分后子集的 基尼系数
+    :param data: 二维数组、矩阵等
+    :return: Gini
+    """
+    label_count = {}  # 标签计数{ label1:count, }
+    total_count = len(data)  # 总数
+    cur_l = 0  # 不让下方出现警告提示
+    for row in data:
+        cur_l = row[-1]
+        if cur_l not in label_count.keys():
+            label_count[cur_l] = 0
+        label_count[cur_l] += 1
+
+    label_size = len(label_count)
+    if label_size > 2:
+        # 多分类
+        return calculate_Gini_more(total_count, label_count)
+    elif label_size == 2:
+        # 二分类
+        return calculate_Gini_two(total_count, label_count[cur_l])
+    else :
+        # 当前数据集只有一个类别
+        return 0
+
+
+
+def calculate_Gini_more(total_count, label_count):
+    """
+    多分类时的基尼指数计算，1 - sum(pi^2)
+    :param total_count:
+    :param label_count:
+    :return:
+    """
+    p = 0.0
+    for label in label_count:
+        p += (label_count[label] / total_count) ** 2
+
+    return 1-p
+
+def calculate_Gini_two(total_count, label_count):
+    """
+    二分类时的计算， 2·p·（1-p）
+    :param total_count: 总数量
+    :param label_count: 其中一个标签的计数
+    :return:
+    """
+    p = label_count / total_count
+    return 2 * p * (1-p)
