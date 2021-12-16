@@ -1,6 +1,17 @@
-import machineLearnCode.Utils.shiro_unilt as su
 import math
 import numpy as np
+
+class DecisionTree(object):
+    def __init__(self, data, feature, algor=1):
+        """
+
+        :param data:        训练集，nparray，最后一列为标签列
+        :param feature:     feature_list
+        :param algor:       1-id3, 2-C4.5, 3-CART
+        """
+        self.data = data
+        self.feature_name_list = feature
+        self.algor = algor
 
 def create_decision_tree(data, feature_name_list):
     """

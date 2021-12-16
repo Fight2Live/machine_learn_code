@@ -1,6 +1,6 @@
 from Utils.shiro_unilt import *
 from Utils.date_to_img import *
-from Classification.KNN.knn_classify import *
+from Classification.KNN.my_knn import *
 
 #from ..shiro_unilt import *
 import pandas as pd
@@ -54,7 +54,7 @@ def test_accurate_rate(k):
         error_count = 0
         for i in range(len(test_data)):
             predict = test_data[i]
-            predict_class = knn_classify(predict, trans_data, trans_label, kk)
+            predict_class = my_knn(predict, trans_data, trans_label, kk)
             if predict_class == test_label[i]:
                 correct_count += 1
             else:
@@ -83,7 +83,7 @@ def test_accuracy(k):
         error_count = 0
         for i in range(len(sample_data)):
             predict = sample_data[i]
-            predict_class = knn_classify(predict, sample_data, label, kk)
+            predict_class = my_knn(predict, sample_data, label, kk)
             if predict_class == label[i]:
                 correct_count += 1
             else:
@@ -112,7 +112,7 @@ def export_resurt(k):
 
     for index in range(len(sample_data)):
         target_dat = sample_data[index]
-        class_result_list.append(knn_classify(target_dat, sample_data, label, k))  # 保存分类结果
+        class_result_list.append(my_knn(target_dat, sample_data, label, k))  # 保存分类结果
 
     # 将分类结果与原数据拼接，方便导出
     old_label = np.array([label])
@@ -147,14 +147,14 @@ test_accurate_rate(cur_K)
 test_accuracy(cur_K)
 
 # 画图
-sample, label = get_sample_data_by_txt(fp)
-# 对特征进行PCE降维后的散点图
-scatter_diagram(sample, label)
-pca_scatter_diagram(sample, label)
-# K从1-20时，样本的精确率与准确率变化情况
-get_rate_img(20)
-
-# 导出
-export_resurt(cur_K)
+# sample, label = get_sample_data_by_txt(fp)
+# # 对特征进行PCE降维后的散点图
+# scatter_diagram(sample, label)
+# pca_scatter_diagram(sample, label)
+# # K从1-20时，样本的精确率与准确率变化情况
+# get_rate_img(20)
+#
+# # 导出
+# export_resurt(cur_K)
 
 
